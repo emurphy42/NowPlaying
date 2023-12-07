@@ -6,5 +6,5 @@
   "UniqueID": "JohnPeters.NowPlaying",
   "EntryDll": "NowPlaying.dll",
   "MinimumApiVersion": "3.0.0",
-  "UpdateKeys": [ "Nexus:???" ]
+  "UpdateKeys": [ "Nexus:19441" ]
 }
