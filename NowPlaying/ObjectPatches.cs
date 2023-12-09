@@ -27,12 +27,12 @@ namespace NowPlaying
             try
             {
                 var songID = Game1.requestedMusicTrack; // e.g. "summer1"
-                ModMonitor.Log($"[Now Playing] Song ID = {songID}", LogLevel.Debug);
+                ModMonitor.Log($"[Now Playing] Song ID = {songID}", LogLevel.Trace);
 
                 // Was this track already announced?
                 if (songID == LastTrackAnnounced)
                 {
-                    ModMonitor.Log($"[Now Playing] Already announced this track", LogLevel.Debug);
+                    ModMonitor.Log($"[Now Playing] Already announced this track", LogLevel.Trace);
                     return;
                 }
                 LastTrackAnnounced = songID;
@@ -40,20 +40,20 @@ namespace NowPlaying
                 // Don't announce absence of a track
                 if (songID == "none")
                 {
-                    ModMonitor.Log($"[Now Playing] Skipping announcement of silence", LogLevel.Debug);
+                    ModMonitor.Log($"[Now Playing] Skipping announcement of silence", LogLevel.Trace);
                     return;
                 }
 
                 // Don't announce an ignored track
                 if (TracksToIgnoreList.Contains(songID))
                 {
-                    ModMonitor.Log($"[Now Playing] Skipping announcement by request", LogLevel.Debug);
+                    ModMonitor.Log($"[Now Playing] Skipping announcement of {songID} by request", LogLevel.Debug);
                     return;
                 }
 
                 // Announce new track
                 var songTitle = Utility.getSongTitleFromCueName(Game1.requestedMusicTrack); // e.g. "Summer (Nature's Crescendo)"
-                ModMonitor.Log($"[Now Playing] Song title = {songTitle}", LogLevel.Debug);
+                ModMonitor.Log($"[Now Playing] Song ID = {songID}, title = {songTitle}", LogLevel.Debug);
                 Game1.showGlobalMessage(string.Format(NowPlayingFormat, songTitle, songID));
             }
             catch (Exception ex)
