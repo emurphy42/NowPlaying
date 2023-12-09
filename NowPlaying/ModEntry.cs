@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using StardewModdingAPI;
 using StardewValley;
+using System.Linq;
 
 namespace NowPlaying
 {
@@ -23,6 +24,7 @@ namespace NowPlaying
 
             ObjectPatches.ModMonitor = this.Monitor;
             ObjectPatches.NowPlayingFormat = Config.NowPlayingFormat;
+            ObjectPatches.SetTracksToIgnore(Config.TracksToIgnore);
 
             var harmony = new Harmony(this.ModManifest.UniqueID);
             // detect when music changes
