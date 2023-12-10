@@ -9,5 +9,8 @@ namespace NowPlaying
         // song IDs to skip announcing, separated by commas
         // https://stardewvalleywiki.com/Modding:Audio#Track_list
         public string TracksToIgnore = "";
+
+        // ignore songs where title is same as ID
+        public bool IgnoreUnnamedTracks = false;
     }
 }

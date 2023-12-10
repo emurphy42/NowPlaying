@@ -13,6 +13,7 @@ namespace NowPlaying
         public static string NowPlayingFormat;
         public static List<string> TracksToIgnoreList = new();
         public static string LastTrackAnnounced = "none";
+        public static bool IgnoreUnnamedTracks = false;
 
         public static void SetTracksToIgnore(string TracksToIgnore)
         {
@@ -51,8 +52,15 @@ namespace NowPlaying
                     return;
                 }
 
-                // Announce new track
+                // Get track title
                 var songTitle = Utility.getSongTitleFromCueName(Game1.requestedMusicTrack); // e.g. "Summer (Nature's Crescendo)"
+                if (IgnoreUnnamedTracks && (songTitle == songID))
+                {
+                    ModMonitor.Log($"[Now Playing] Skipping announcement of {songID} because title is same as ID", LogLevel.Debug);
+                    return;
+                }
+
+                // Announce new track
                 ModMonitor.Log($"[Now Playing] Song ID = {songID}, title = {songTitle}", LogLevel.Debug);
                 Game1.showGlobalMessage(string.Format(NowPlayingFormat, songTitle, songID));
             }
