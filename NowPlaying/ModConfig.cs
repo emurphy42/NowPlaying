@@ -1,4 +1,5 @@
 ﻿using StardewModdingAPI;
+using System.Collections.Generic;
 
 namespace NowPlaying
 {
@@ -12,5 +13,8 @@ namespace NowPlaying
 
         // ignore songs where title is same as ID
         public bool IgnoreUnnamedTracks = false;
+
+        // override song titles, e.g. to match a custom music mod that replaces standard ones
+        public Dictionary<string, string> TracksToRename = new();
     }
 }
