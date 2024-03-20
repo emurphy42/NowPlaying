@@ -25,8 +25,10 @@ namespace NowPlaying
             ObjectPatches.ModMonitor = this.Monitor;
             ObjectPatches.NowPlayingFormat = Config.NowPlayingFormat;
             ObjectPatches.SetTracksToIgnore(Config.TracksToIgnore);
+            ObjectPatches.SetTrackNamesToReplaceWithID(Config.TrackNamesToReplaceWithID);
             ObjectPatches.IgnoreUnnamedTracks = Config.IgnoreUnnamedTracks;
             ObjectPatches.TracksToRename = Config.TracksToRename;
+            ObjectPatches.RepeatDelay = Config.RepeatDelay;
 
             var harmony = new Harmony(this.ModManifest.UniqueID);
             // detect when music changes

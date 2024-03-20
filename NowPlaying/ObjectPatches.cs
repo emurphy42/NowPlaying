@@ -12,16 +12,26 @@ namespace NowPlaying
         public static IMonitor ModMonitor; // allow patches to call ModMonitor.Log()
         public static string NowPlayingFormat;
         public static List<string> TracksToIgnoreList = new();
+        public static List<string> TrackNamesToReplaceWithIDList = new();
         public static string LastTrackAnnounced = "none";
         public static bool IgnoreUnnamedTracks = false;
         public static Dictionary<string, DateTime> WhenToReannounceTrack = new();
         public static Dictionary<string, string> TracksToRename = new();
+        public static int RepeatDelay;
 
         public static void SetTracksToIgnore(string TracksToIgnore)
         {
             foreach (var track in TracksToIgnore.Split(','))
             {
                 TracksToIgnoreList.Add(track.Trim());
+            }
+        }
+
+        public static void SetTrackNamesToReplaceWithID(string TrackNamesToReplaceWithID)
+        {
+            foreach (var trackName in TrackNamesToReplaceWithID.Split(','))
+            {
+                TrackNamesToReplaceWithIDList.Add(trackName.Trim());
             }
         }
 
@@ -41,7 +51,7 @@ namespace NowPlaying
                 LastTrackAnnounced = songID;
 
                 // Don't announce absence of a track
-                if (songID == "none")
+                if (songID == "none" || songID == "silence")
                 {
                     ModMonitor.Log($"[Now Playing] Skipping announcement of silence", LogLevel.Trace);
                     return;
@@ -67,18 +77,24 @@ namespace NowPlaying
                 var songTitle = (TracksToRename.ContainsKey(songID))
                     ? TracksToRename[songID]
                     : Utility.getSongTitleFromCueName(Game1.requestedMusicTrack); // e.g. "Summer (Nature's Crescendo)"
+                if (TrackNamesToReplaceWithIDList.Contains(songTitle))
+                {
+                    ModMonitor.Log($"[Now Playing] TODO {songTitle} by request", LogLevel.Debug);
+                    songTitle = songID;
+                }
                 if (IgnoreUnnamedTracks && (songTitle == songID))
                 {
                     ModMonitor.Log($"[Now Playing] Skipping announcement of {songID} because title is same as ID", LogLevel.Debug);
                     return;
                 }
 
+
                 // Announce new track
                 ModMonitor.Log($"[Now Playing] Song ID = {songID}, title = {songTitle}", LogLevel.Debug);
                 Game1.showGlobalMessage(string.Format(NowPlayingFormat, songTitle, songID));
 
                 // Update cooldown timer for next announcement of same track
-                WhenToReannounceTrack[songID] = DateTime.Now.AddSeconds(1);
+                WhenToReannounceTrack[songID] = DateTime.Now.AddSeconds(RepeatDelay);
             }
             catch (Exception ex)
             {
