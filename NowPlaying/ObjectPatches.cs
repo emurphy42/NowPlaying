@@ -18,6 +18,8 @@ namespace NowPlaying
         public static Dictionary<string, DateTime> WhenToReannounceTrack = new();
         public static Dictionary<string, string> TracksToRename = new();
         public static int RepeatDelay;
+        public static bool EnableAnnouncements;
+        public static SButton ToggleAnnouncementsKey;
 
         public static void SetTracksToIgnore(string TracksToIgnore)
         {
@@ -41,6 +43,13 @@ namespace NowPlaying
             {
                 var songID = Game1.requestedMusicTrack; // e.g. "summer1"
                 ModMonitor.Log($"[Now Playing] Song ID = {songID}", LogLevel.Trace);
+
+                // Are announcements currently disabled?
+                if (EnableAnnouncements == false)
+                {
+                    ModMonitor.Log($"[Now Playing] Announcements are disabled", LogLevel.Trace);
+                    return;
+                }
 
                 // Was this track already announced?
                 if (songID == LastTrackAnnounced)
@@ -79,7 +88,7 @@ namespace NowPlaying
                     : Utility.getSongTitleFromCueName(Game1.requestedMusicTrack); // e.g. "Summer (Nature's Crescendo)"
                 if (TrackNamesToReplaceWithIDList.Contains(songTitle))
                 {
-                    ModMonitor.Log($"[Now Playing] TODO {songTitle} by request", LogLevel.Debug);
+                    ModMonitor.Log($"[Now Playing] Replacing {songTitle} with {songID} by request", LogLevel.Debug);
                     songTitle = songID;
                 }
                 if (IgnoreUnnamedTracks && (songTitle == songID))

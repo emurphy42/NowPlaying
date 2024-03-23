@@ -22,5 +22,11 @@ namespace NowPlaying
 
         // after announcing a song, wait this many seconds before announcing it again
         public int RepeatDelay = 2;
+
+        // option to temporarily disable all announcements
+        public bool EnableAnnouncements = true;
+
+        // key to toggle announcements off/on
+        public SButton ToggleAnnouncementsKey = SButton.N;
     }
 }
