@@ -23,7 +23,10 @@ namespace NowPlaying
             this.Config = this.Helper.ReadConfig<ModConfig>();
 
             ObjectPatches.ModMonitor = this.Monitor;
+
             ObjectPatches.Config = this.Config;
+            ObjectPatches.SetTracksToIgnore();
+            ObjectPatches.SetTrackNamesToReplaceWithID();
 
             var harmony = new Harmony(this.ModManifest.UniqueID);
             // detect when music changes
