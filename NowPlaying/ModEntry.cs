@@ -1,10 +1,7 @@
 ﻿using GenericModConfigMenu;
 using HarmonyLib;
-using Microsoft.Xna.Framework.Media;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley;
-using System.Linq;
 
 namespace NowPlaying
 {
@@ -26,7 +23,7 @@ namespace NowPlaying
             this.Config = this.Helper.ReadConfig<ModConfig>();
 
             ObjectPatches.ModMonitor = this.Monitor;
-            InjectOptions();
+            ObjectPatches.Config = this.Config;
 
             var harmony = new Harmony(this.ModManifest.UniqueID);
             // detect when music changes
@@ -39,23 +36,17 @@ namespace NowPlaying
             Helper.Events.Input.ButtonPressed += (e, a) => OnButtonPressed(e, a);
         }
 
-        /// <summary>Update static object's attributes to match current options</summary>
-        private void InjectOptions()
-        {
-            ObjectPatches.NowPlayingFormat = Config.NowPlayingFormat;
-            ObjectPatches.SetTracksToIgnore(Config.TracksToIgnore);
-            ObjectPatches.SetTrackNamesToReplaceWithID(Config.TrackNamesToReplaceWithID);
-            ObjectPatches.IgnoreUnnamedTracks = Config.IgnoreUnnamedTracks;
-            ObjectPatches.TracksToRename = Config.TracksToRename;
-            ObjectPatches.RepeatDelay = Config.RepeatDelay;
-            ObjectPatches.EnableAnnouncements = Config.EnableAnnouncements;
-            ObjectPatches.ToggleAnnouncementsKey = Config.ToggleAnnouncementsKey;
-        }
-
-        /// <summary>Re-inject options after they're changed</summary>
         private void OnFieldChanged(string fieldID, object fieldValue)
         {
-            InjectOptions();
+            switch (fieldID)
+            {
+                case "TracksToIgnore":
+                    ObjectPatches.SetTracksToIgnore();
+                    break;
+                case "TrackNamesToReplaceWithID":
+                    ObjectPatches.SetTrackNamesToReplaceWithID();
+                    break;
+            }
         }
 
         /// <summary>Add to Generic Mod Config Menu</summary>
@@ -73,7 +64,7 @@ namespace NowPlaying
                 save: () => this.Helper.WriteConfig(this.Config)
             );
 
-            // re-inject options after they're changed
+            // parse comma-delimited lists ahead of time for speed
             configMenu.OnFieldChanged(
                 mod: this.ModManifest,
                 onChange: (fieldID, fieldValue) => this.OnFieldChanged(fieldID, fieldValue)
@@ -137,7 +128,6 @@ namespace NowPlaying
             if (e.Button == this.Config.ToggleAnnouncementsKey)
             {
                 this.Config.EnableAnnouncements = !this.Config.EnableAnnouncements;
-                InjectOptions();
 
                 var enabledDescription = this.Config.EnableAnnouncements ? "enabled" : "disabled";
                 this.Monitor.Log($"[Now Playing] Announcements are now {enabledDescription}", LogLevel.Debug);
